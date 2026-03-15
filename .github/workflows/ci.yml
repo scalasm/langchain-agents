@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.13
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Check code formatting
+        run: uv run ruff format . --check
+
+      - name: Lint code
+        run: uv run ruff check .
+
+      - name: Type check
+        run: uv run mypy src/
+
+      - name: Run unit tests
+        run: uv run pytest tests/unit/ -v --cov=src/my_langchain_agents --cov-report=xml --cov-report=term-missing
+
+      - name: Run integration tests (PR and main)
+        run: uv run pytest tests/integration/ -v --cov=src/my_langchain_agents --cov-append --cov-report=xml --cov-report=term-missing
+
+      - name: Run e2e tests (main branch only)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: uv run pytest tests/e2e/ -v --cov=src/my_langchain_agents --cov-append --cov-report=xml --cov-report=term-missing
+
+      - name: Check coverage threshold
+        run: uv run coverage report --fail-under=80
