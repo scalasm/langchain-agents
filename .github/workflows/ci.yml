@@ -38,11 +38,21 @@ jobs:
         run: uv run pytest tests/unit/ -v --cov=src/my_langchain_agents --cov-report=xml --cov-report=term-missing
 
       - name: Run integration tests (PR and main)
-        run: uv run pytest tests/integration/ -v --cov=src/my_langchain_agents --cov-append --cov-report=xml --cov-report=term-missing
+        run: |
+          if find tests/integration -name 'test_*.py' -o -name '*_test.py' | grep -q .; then
+            uv run pytest tests/integration/ -v --cov=src/my_langchain_agents --cov-append --cov-report=xml --cov-report=term-missing
+          else
+            echo "No integration tests found, skipping..."
+          fi
 
       - name: Run e2e tests (main branch only)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: uv run pytest tests/e2e/ -v --cov=src/my_langchain_agents --cov-append --cov-report=xml --cov-report=term-missing
+        run: |
+          if find tests/e2e -name 'test_*.py' -o -name '*_test.py' | grep -q .; then
+            uv run pytest tests/e2e/ -v --cov=src/my_langchain_agents --cov-append --cov-report=xml --cov-report=term-missing
+          else
+            echo "No e2e tests found, skipping..."
+          fi
 
       - name: Check coverage threshold
         run: uv run coverage report --fail-under=80
