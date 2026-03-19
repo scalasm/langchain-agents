@@ -51,8 +51,6 @@
           "tests"
         ],
         "ruff.enable": true,
-        "ruff.lint.run": "onSave",
-        "ruff.format.args": [],
         "files.trimTrailingWhitespace": true,
         "files.insertFinalNewline": true,
         "editor.rulers": [88],
