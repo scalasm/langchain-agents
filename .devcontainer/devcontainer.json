@@ -20,6 +20,10 @@
 
   "postCreateCommand": "pip install uv && uv sync && uv run pre-commit install",
 
+  "remoteEnv": {
+    "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}"
+  },
+
   "customizations": {
     "vscode": {
       "extensions": [
