@@ -1,0 +1,1 @@
+"""Sample Prompt patterns."""

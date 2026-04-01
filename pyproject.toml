@@ -13,6 +13,7 @@ authors = [
     { name = "Mario Scalas", email = "mario@example.com" }
 ]
 dependencies = [
+    "langchain-core>=1.2.20",
     "langchain-openai>=1.1.11",
     "typer>=0.12.0",
 ]
@@ -124,9 +125,14 @@ show_error_codes = true
 module = ["tests.*"]
 disallow_untyped_defs = false
 
+[[tool.mypy.overrides]]
+module = ["my_langchain_agents.pattern_examples.*"]
+ignore_errors = true
+
 [tool.coverage.run]
 source = ["src"]
 omit = [
+    "src/my_langchain_agents/pattern_examples/*",
     "tests/*",
     "**/__pycache__/*",
     "**/.venv/*",
