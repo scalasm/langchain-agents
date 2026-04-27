@@ -1,6 +1,7 @@
 """Routing with Google ADK (Agent Development Kit)."""
 
 import logging
+import traceback
 import uuid
 import warnings
 
@@ -78,9 +79,8 @@ coordinator_agent = Agent(
         You are the main coordinator. Your only task is to analyze incoming user
         requests and delegate them to the appropriate specialist agent.
         Do not try to answer the user directly
-        - For any request related to booking flights or hotels, delegate tot he "Booking Agent".
-        - For all other general information requests, delegate to the "Information Agent".
-        "
+        - For any request related to booking flights or hotels, delegate tot 'booking' agent.
+        - For all other general information requests, delegate to 'info' agent.
     """,
     description="A coordinator agent that routes user requests to the appropriate specialist agent based on the content of the request.",
     # The presence of sub-agents enables LLM-driven delegation (auto flow) by default.
@@ -120,8 +120,6 @@ async def run_coordinator_agent(runner: InMemoryRunner, request: str) -> str:
                 break  # Exit loop after processing the final response
         logging.info("Coordinator final response for %s: %s", user_id, final_result)
     except Exception as e:
-        import traceback
-
         traceback.print_exc()
         error_message = f"An error occurred while processing the request: {e!s}"
         logging.error(error_message)
